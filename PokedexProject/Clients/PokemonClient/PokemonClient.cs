@@ -13,18 +13,6 @@ namespace PokedexProject.Clients.PokemonClient
         /// <param name="slugifiedPokemonName">Name of the pokemon in SlugCase</param>
         /// <returns>The result of the division.</returns>
         /// <exception cref="HttpRequestException">Thrown when request towards PokeApi is not successfull</exception>
-        public async Task<PokemonBase> GetPokemonByName(string slugifiedPokemonName)
-        {
-            var request = new RestRequest($"pokemon/{slugifiedPokemonName}");
-
-            var response = await _client.ExecuteAsync<PokemonBase>(request);
-
-            if (!response.IsSuccessful)
-                throw new HttpRequestException(response.ErrorMessage, response.ErrorException, response.StatusCode);
-
-            return response.Data;
-        }
-
         public async Task<PokemonDescription> GetPokemonDescriptionByName(string slugifiedPokemonName)
         {
             var request = new RestRequest($"pokemon-species/{slugifiedPokemonName}");
