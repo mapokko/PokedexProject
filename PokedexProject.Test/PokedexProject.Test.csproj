@@ -22,11 +22,11 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Fixtures\" />
+    <ProjectReference Include="..\PokedexProject\PokedexProject.csproj" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\PokedexProject\PokedexProject.csproj" />
+    <Folder Include="Fixtures\" />
   </ItemGroup>
 
 </Project>

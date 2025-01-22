@@ -1,6 +1,8 @@
 ﻿using FluentValidation;
 using PokedexProject.Clients.PokemonClient;
+using PokedexProject.Clients.TranslationClient;
 using PokedexProject.Middlewares.PokemonService;
+using PokedexProject.Middlewares.TranslationService;
 using PokedexProject.Models;
 using Slugify;
 
@@ -13,7 +15,9 @@ namespace PokedexProject
             services.AddMemoryCache();
             services.AddValidatorsFromAssemblyContaining<PokemonDescriptionValidator>();
             services.AddSingleton<IPokemonClient, PokemonClient>();
+            services.AddSingleton<ITranslationClient, TranslationClient>();
             services.AddScoped<IPokemonService, PokemonService>();
+            services.AddScoped<ITranslationService, TranslationService>();
             services.AddSingleton<ISlugHelper>(_ =>
             {
                 var options = new SlugHelperConfiguration();
