@@ -33,5 +33,69 @@ namespace PokedexProject.Middlewares
         public string ErrorMessage { get; set; }
     }
 
+    public class PokemonDisplay : PokemonInfo
+    {
+        public PokemonDisplay() { }
+        public PokemonDisplay(PokemonCache pokemon, TranslationType type)
+        {
+            Name = pokemon.Name;
+            IsLegendary = pokemon.IsLegendary;
+            HabitatName = pokemon.HabitatName;
+
+            switch (type)
+            {
+                case TranslationType.Regular:
+                    Description = pokemon.RegularText;
+                    break;
+                case TranslationType.Yoda:
+                    Description = pokemon.YodaTranslation;
+                    break;
+                case TranslationType.Shakespeare:
+                    Description = pokemon.ShakespeareTranslation;
+                    break;
+            }
+        }
+
+    }
+
+    public class PokemonCache : PokemonInfo
+    {
+        public PokemonCache(PokemonDisplay pokemon)
+        {
+            Name = pokemon.Name;
+            IsLegendary = pokemon.IsLegendary;
+            HabitatName = pokemon.HabitatName;
+            RegularText = pokemon.Description;
+        }
+        public string RegularText { get; set; }
+        public string YodaTranslation { get; set; }
+        public string ShakespeareTranslation { get; set; }
+    }
+
+    public class PokemonInfo
+    {
+        [JsonPropertyName("name")]
+        public string Name { get; set; }
+
+        [JsonPropertyName("description")]
+        public string Description { get; set; }
+
+        [JsonPropertyName("is_legendary")]
+        public bool IsLegendary { get; set; }
+
+        [JsonPropertyName("habitat")]
+        public string HabitatName { get; set; }
+
+        [JsonIgnore]
+        public bool UseYoda => IsLegendary || HabitatName == "cave";
+    }
+
+    public enum TranslationType
+    {
+        Regular,
+        Yoda,
+        Shakespeare
+    }
+
 }
 
