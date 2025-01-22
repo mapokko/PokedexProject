@@ -10,15 +10,18 @@ using Slugify;
 
 namespace PokedexProject.Middlewares.PokemonService
 {
-    public class PokemonService(IPokemonClient pokemonClient, ISlugHelper slug, IMemoryCache memoryCache, PokemonDescriptionValidator validator) : IPokemonService
+    public sealed class PokemonService(IPokemonClient pokemonClient, ISlugHelper slug, IMemoryCache memoryCache, PokemonDescriptionValidator validator) : IPokemonService
     {
 
         public async Task<Result<PokemonDisplay>> GetPokemonByInfo(string pokemonName)
         {
+            if(string.IsNullOrEmpty(pokemonName.Trim()))
+                Result<PokemonDisplay>.ErrorResult(HttpStatusCode.BadRequest, "Pokemon name cannot be empty");
+
             string slugifiedPokemonName = slug.GenerateSlug(pokemonName);
-            if(memoryCache.TryGetValue(slugifiedPokemonName, out PokemonDisplay cachedPokemon))
+            if(memoryCache.TryGetValue(slugifiedPokemonName, out PokemonCache cachedPokemon))
             {
-                return Result<PokemonDisplay>.SuccessResult(cachedPokemon);
+                return Result<PokemonDisplay>.SuccessResult(new PokemonDisplay(cachedPokemon, TranslationType.Regular));
             }
 
             PokemonDescription pokemonDescription = null;
@@ -51,9 +54,9 @@ namespace PokedexProject.Middlewares.PokemonService
                 HabitatName = pokemonDescription.Habitat.Name
             };
 
-            memoryCache.Set(slugifiedPokemonName, result);
+            memoryCache.Set(slugifiedPokemonName, new PokemonCache(result));
 
-            return Result<PokemonDisplay>.SuccessResult(result); ;
+            return Result<PokemonDisplay>.SuccessResult(result);
         }
     }
 }
