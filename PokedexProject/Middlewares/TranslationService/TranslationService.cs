@@ -52,11 +52,6 @@ namespace PokedexProject.Middlewares.TranslationService
                 else
                     translationResponse = await translationClient.GetShakespeareTranslation(pokemonDisplay.Description);
             }
-            catch (HttpRequestException ex)
-            {
-                return Result<PokemonDisplay>.SuccessResult(pokemonDisplay);
-
-            }
             catch (Exception ex)
             {
                 return Result<PokemonDisplay>.SuccessResult(pokemonDisplay);
