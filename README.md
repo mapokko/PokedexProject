@@ -48,6 +48,14 @@ and receive the content
 }
 ```
 
+## Deployment
+
+The server is deployed at the following address:
+
+https://pokedexproject-jebl.onrender.com
+
+Please be aware that the response time might be very long (minutes if the container needs to be spun up) since i'm using a free tier subscription.
+
 ## Considerations on production
 
 Although a simple service, there are some considerations that can be make whether this were to go on production
@@ -55,3 +63,7 @@ Although a simple service, there are some considerations that can be make whethe
 -   if this endpoint where to be scaled, there could be come performance advantages by using a shared remote cache using Redis or similar services and controlling the behaviour with some env parameter
 -   if this service where to run in a distributed environment as a mircoservice, many different aspects such as rate-limiting, resilience, circuit-break policy etc. need to be considered. Some of these concerns may be alleviate by using a library like Polly
 -   regarding language, we should consider all the localization complications since the pokeapi endpoint can support many different languages. This could controlled using, for example, the accept-language header coming with the request
+
+## Final Consideration
+
+One final note that i want to make is that i interpreted the statement "**_The API response should contain a minimum of:_**" as that the four attributes specified MUST be populated, and return an error otherwise. In fact, searching the pokemon "Dialga" which has a null value for the Habitat, return a NotFound error specifying that the habitat is not present.
