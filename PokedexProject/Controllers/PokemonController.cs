@@ -1,4 +1,4 @@
-﻿using System.Net;
+using System.Net;
 using Microsoft.AspNetCore.Mvc;
 using PokedexProject.Middlewares.PokemonService;
 using PokedexProject.Models;
@@ -95,6 +95,7 @@ namespace PokedexProject.Controllers
         /// <response code="400">If the pokemon name is missing</response>
         /// <response code="404">If the item is not found or any of the 4 required attributes are not found</response>
         /// <response code="500">For any internal error</response>
+
         [HttpGet("translated/{pokemonName}")]
         public async Task<IActionResult> GetTranslatedPokemon([FromRoute] string pokemonName)
         {

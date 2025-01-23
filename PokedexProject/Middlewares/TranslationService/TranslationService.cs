@@ -1,4 +1,4 @@
-﻿using Microsoft.Extensions.Caching.Memory;
+using Microsoft.Extensions.Caching.Memory;
 using PokedexProject.Clients.PokemonClient;
 using PokedexProject.Clients.TranslationClient;
 using PokedexProject.Controllers;
