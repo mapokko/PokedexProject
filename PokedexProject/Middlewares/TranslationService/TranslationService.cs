@@ -1,4 +1,4 @@
-﻿using Microsoft.Extensions.Caching.Memory;
+using Microsoft.Extensions.Caching.Memory;
 using PokedexProject.Clients.PokemonClient;
 using PokedexProject.Clients.TranslationClient;
 using PokedexProject.Controllers;
@@ -51,11 +51,6 @@ namespace PokedexProject.Middlewares.TranslationService
                     translationResponse = await translationClient.GetYodaTranslation(pokemonDisplay.Description);
                 else
                     translationResponse = await translationClient.GetShakespeareTranslation(pokemonDisplay.Description);
-            }
-            catch (HttpRequestException ex)
-            {
-                return Result<PokemonDisplay>.SuccessResult(pokemonDisplay);
-
             }
             catch (Exception ex)
             {
