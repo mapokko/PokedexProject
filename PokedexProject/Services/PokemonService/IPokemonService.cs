@@ -6,6 +6,6 @@ namespace PokedexProject.Middlewares.PokemonService
 {
     public interface IPokemonService
     {
-        public Task<Result<PokemonDisplay>> GetPokemonByInfo(string pokemonName);
+        public Task<Result<PokemonDTO>> GetPokemonByName(string pokemonName);
     }
 }

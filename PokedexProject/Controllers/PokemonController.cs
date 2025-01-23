@@ -51,7 +51,7 @@ namespace PokedexProject.Controllers
                 return new ObjectResult(errorList.Errors) { StatusCode = (int)HttpStatusCode.BadRequest };
             }
 
-            var result = await pokemonService.GetPokemonByInfo(pokemonName);
+            var result = await pokemonService.GetPokemonByName(pokemonName);
 
             if (result.Success)
                 return Ok(result.Data);
@@ -105,7 +105,7 @@ namespace PokedexProject.Controllers
                 return new ObjectResult(errorList.Errors) { StatusCode = (int)HttpStatusCode.BadRequest };
             }
 
-            var result = await translationService.GetTranslatedPokemonByInfo(pokemonName);
+            var result = await translationService.GetTranslatedPokemonByName(pokemonName);
 
             if (result.Success)
                 return Ok(result.Data);

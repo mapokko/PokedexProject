@@ -7,12 +7,6 @@ namespace PokedexProject.Clients.PokemonClient
     {
         private readonly RestClient _client = new("https://pokeapi.co/api/v2/");
 
-        /// <summary>
-        /// Get info on pokemon based on its slugified name
-        /// </summary>
-        /// <param name="slugifiedPokemonName">Name of the pokemon in SlugCase</param>
-        /// <returns>The response form pokeapi.</returns>
-        /// <exception cref="HttpRequestException">Thrown when request towards PokeApi is not successfull</exception>
         public async Task<PokemonDescription> GetPokemonDescriptionByName(string slugifiedPokemonName)
         {
             var request = new RestRequest($"pokemon-species/{slugifiedPokemonName}");

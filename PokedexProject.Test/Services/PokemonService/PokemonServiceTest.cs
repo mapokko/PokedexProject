@@ -174,7 +174,7 @@ namespace PokedexProject.Test.Middlewares.PokemonService
 
         [Theory]
         [MemberData(nameof(TestPokemon))]
-        public async void GetPokemonByInfo_ShouldReturnAllFieldsCorrectly_WhenAllDataIsPassed(string englishLanguageCode, string flavorText, string habitatName, string pokemonName, bool isLegendary)
+        public async void GetPokemonByName_ShouldReturnAllFieldsCorrectly_WhenAllDataIsPassed(string englishLanguageCode, string flavorText, string habitatName, string pokemonName, bool isLegendary)
         {
             string slugifiedName = _serviceProvider.GetService<ISlugHelper>().GenerateSlug(pokemonName);
 
@@ -211,7 +211,7 @@ namespace PokedexProject.Test.Middlewares.PokemonService
 
             var service = new PokedexProject.Middlewares.PokemonService.PokemonService(_pokemonClient.Object, _serviceProvider.GetService<ISlugHelper>(), _serviceProvider.GetService<IMemoryCache>(), _serviceProvider.GetService<PokemonDescriptionValidator>());
 
-            var result = await service.GetPokemonByInfo(pokemonName);
+            var result = await service.GetPokemonByName(pokemonName);
 
             Assert.NotNull(result);
             Assert.Equal(result.Success, true);
@@ -223,7 +223,7 @@ namespace PokedexProject.Test.Middlewares.PokemonService
         }
 
         [Fact]
-        public async void GetPokemonByInfo_ShouldReturnOneError_WhenHttpRequestExceptionIsThrown()
+        public async void GetPokemonByName_ShouldReturnOneError_WhenHttpRequestExceptionIsThrown()
         {
             string errorMessage = "i'm a teapot";
             HttpStatusCode code = HttpStatusCode.ExpectationFailed;
@@ -233,7 +233,7 @@ namespace PokedexProject.Test.Middlewares.PokemonService
 
             var service = new PokedexProject.Middlewares.PokemonService.PokemonService(_pokemonClient.Object, _serviceProvider.GetService<ISlugHelper>(), _serviceProvider.GetService<IMemoryCache>(), _serviceProvider.GetService<PokemonDescriptionValidator>());
 
-            var result = await service.GetPokemonByInfo(defaultPokemon.EnglishName);
+            var result = await service.GetPokemonByName(defaultPokemon.EnglishName);
 
             Assert.NotNull(result);
             Assert.Equal(result.Success, false);
@@ -246,7 +246,7 @@ namespace PokedexProject.Test.Middlewares.PokemonService
         }
 
         [Fact]
-        public async void GetPokemonByInfo_ShouldReturnOneError_WhenAnyOtherExceptionIsThrown()
+        public async void GetPokemonByName_ShouldReturnOneError_WhenAnyOtherExceptionIsThrown()
         {
             string errorMessage = "i'm not a teapot";
 
@@ -255,7 +255,7 @@ namespace PokedexProject.Test.Middlewares.PokemonService
 
             var service = new PokedexProject.Middlewares.PokemonService.PokemonService(_pokemonClient.Object, _serviceProvider.GetService<ISlugHelper>(), _serviceProvider.GetService<IMemoryCache>(), _serviceProvider.GetService<PokemonDescriptionValidator>());
 
-            var result = await service.GetPokemonByInfo(defaultPokemon.EnglishName);
+            var result = await service.GetPokemonByName(defaultPokemon.EnglishName);
 
             Assert.NotNull(result);
             Assert.Equal(result.Success, false);
@@ -269,7 +269,7 @@ namespace PokedexProject.Test.Middlewares.PokemonService
 
         [Theory]
         [MemberData(nameof(TestHabitat))]
-        public async void GetPokemonByInfo_ShouldReturnOneError_WhenHabitatIsNullOrEmpty(Entry habitat)
+        public async void GetPokemonByName_ShouldReturnOneError_WhenHabitatIsNullOrEmpty(Entry habitat)
         {
 
             _pokemonClient.Setup(_ => _.GetPokemonDescriptionByName(It.IsAny<string>())).ReturnsAsync(
@@ -281,7 +281,7 @@ namespace PokedexProject.Test.Middlewares.PokemonService
 
             var service = new PokedexProject.Middlewares.PokemonService.PokemonService(_pokemonClient.Object, _serviceProvider.GetService<ISlugHelper>(), _serviceProvider.GetService<IMemoryCache>(), _serviceProvider.GetService<PokemonDescriptionValidator>());
 
-            var result = await service.GetPokemonByInfo(defaultPokemon.EnglishName);
+            var result = await service.GetPokemonByName(defaultPokemon.EnglishName);
 
             Assert.NotNull(result);
             Assert.Equal(result.Success, false);
@@ -293,7 +293,7 @@ namespace PokedexProject.Test.Middlewares.PokemonService
 
         [Theory]
         [MemberData(nameof(TestDescription))]
-        public async void GetPokemonByInfo_ShouldReturnOneError_WhenFlavorEntriesIsNullOrEmpty(List<FlavorTextEntry> flavorEntries)
+        public async void GetPokemonByName_ShouldReturnOneError_WhenFlavorEntriesIsNullOrEmpty(List<FlavorTextEntry> flavorEntries)
         {
 
             _pokemonClient.Setup(_ => _.GetPokemonDescriptionByName(It.IsAny<string>())).ReturnsAsync(
@@ -305,7 +305,7 @@ namespace PokedexProject.Test.Middlewares.PokemonService
 
             var service = new PokedexProject.Middlewares.PokemonService.PokemonService(_pokemonClient.Object, _serviceProvider.GetService<ISlugHelper>(), _serviceProvider.GetService<IMemoryCache>(), _serviceProvider.GetService<PokemonDescriptionValidator>());
 
-            var result = await service.GetPokemonByInfo(defaultPokemon.EnglishName);
+            var result = await service.GetPokemonByName(defaultPokemon.EnglishName);
 
             Assert.NotNull(result);
             Assert.Equal(result.Success, false);
@@ -317,7 +317,7 @@ namespace PokedexProject.Test.Middlewares.PokemonService
 
         [Theory]
         [MemberData(nameof(TestDescriptionContent))]
-        public async void GetPokemonByInfo_ShouldReturnOneError_WhenFlavorEntriesIsNotEnglishOrDoesntHaveDescripton(List<FlavorTextEntry> flavorEntries)
+        public async void GetPokemonByName_ShouldReturnOneError_WhenFlavorEntriesIsNotEnglishOrDoesntHaveDescripton(List<FlavorTextEntry> flavorEntries)
         {
 
             _pokemonClient.Setup(_ => _.GetPokemonDescriptionByName(It.IsAny<string>())).ReturnsAsync(
@@ -329,7 +329,7 @@ namespace PokedexProject.Test.Middlewares.PokemonService
 
             var service = new PokedexProject.Middlewares.PokemonService.PokemonService(_pokemonClient.Object, _serviceProvider.GetService<ISlugHelper>(), _serviceProvider.GetService<IMemoryCache>(), _serviceProvider.GetService<PokemonDescriptionValidator>());
 
-            var result = await service.GetPokemonByInfo(defaultPokemon.EnglishName);
+            var result = await service.GetPokemonByName(defaultPokemon.EnglishName);
 
             Assert.NotNull(result);
             Assert.Equal(result.Success, false);
@@ -341,7 +341,7 @@ namespace PokedexProject.Test.Middlewares.PokemonService
 
         [Theory]
         [MemberData(nameof(TestNames))]
-        public async void GetPokemonByInfo_ShouldReturnOneError_WhenNamesIsNullOrEmpty(List<NameEntry> nameEntries)
+        public async void GetPokemonByName_ShouldReturnOneError_WhenNamesIsNullOrEmpty(List<NameEntry> nameEntries)
         {
 
             _pokemonClient.Setup(_ => _.GetPokemonDescriptionByName(It.IsAny<string>())).ReturnsAsync(
@@ -353,7 +353,7 @@ namespace PokedexProject.Test.Middlewares.PokemonService
 
             var service = new PokedexProject.Middlewares.PokemonService.PokemonService(_pokemonClient.Object, _serviceProvider.GetService<ISlugHelper>(), _serviceProvider.GetService<IMemoryCache>(), _serviceProvider.GetService<PokemonDescriptionValidator>());
 
-            var result = await service.GetPokemonByInfo(defaultPokemon.EnglishName);
+            var result = await service.GetPokemonByName(defaultPokemon.EnglishName);
 
             Assert.NotNull(result);
             Assert.Equal(result.Success, false);
@@ -365,7 +365,7 @@ namespace PokedexProject.Test.Middlewares.PokemonService
 
         [Theory]
         [MemberData(nameof(TestNameContent))]
-        public async void GetPokemonByInfo_ShouldReturnOneError_WhenNameEntriesIsNotEnglishOrDoesntHaveDescripton(List<NameEntry> nameEntries)
+        public async void GetPokemonByName_ShouldReturnOneError_WhenNameEntriesIsNotEnglishOrDoesntHaveDescripton(List<NameEntry> nameEntries)
         {
 
             _pokemonClient.Setup(_ => _.GetPokemonDescriptionByName(It.IsAny<string>())).ReturnsAsync(
@@ -377,7 +377,7 @@ namespace PokedexProject.Test.Middlewares.PokemonService
 
             var service = new PokedexProject.Middlewares.PokemonService.PokemonService(_pokemonClient.Object, _serviceProvider.GetService<ISlugHelper>(), _serviceProvider.GetService<IMemoryCache>(), _serviceProvider.GetService<PokemonDescriptionValidator>());
 
-            var result = await service.GetPokemonByInfo(defaultPokemon.EnglishName);
+            var result = await service.GetPokemonByName(defaultPokemon.EnglishName);
 
             Assert.NotNull(result);
             Assert.Equal(result.Success, false);

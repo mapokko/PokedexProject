@@ -22,7 +22,7 @@ namespace PokedexProject.Test.Middlewares.TranslationService
         private Mock<IPokemonService> _pokemonService;
         private readonly IServiceProvider _serviceProvider;
 
-        private PokemonDisplay defaultPokemon;
+        private PokemonDTO defaultPokemon;
         private TranslationResponse defaultTranslation;
         public TranslationServiceTest()
         {
@@ -33,7 +33,7 @@ namespace PokedexProject.Test.Middlewares.TranslationService
             serviceCollection.AddDependencies();
             _serviceProvider = serviceCollection.BuildServiceProvider();
 
-            defaultPokemon = new PokemonDisplay()
+            defaultPokemon = new PokemonDTO()
             {
                 Description = "normal Description",
                 HabitatName = "swamp",
@@ -59,9 +59,9 @@ namespace PokedexProject.Test.Middlewares.TranslationService
         public void Dispose() { }
 
         [Fact]
-        public async void GetTranslatedPokemonByInfo_ShouldReturnYodaTranslatedPokemonDescription_WhenAllDataIsProvided()
+        public async void GetTranslatedPokemonByName_ShouldReturnYodaTranslatedPokemonDescription_WhenAllDataIsProvided()
         {
-            _pokemonService.Setup(x => x.GetPokemonByInfo(It.IsAny<string>())).ReturnsAsync(Result<PokemonDisplay>.SuccessResult(defaultPokemon));
+            _pokemonService.Setup(x => x.GetPokemonByName(It.IsAny<string>())).ReturnsAsync(Result<PokemonDTO>.SuccessResult(defaultPokemon));
             _translationClient.Setup(x => x.GetYodaTranslation(It.IsAny<string>())).ReturnsAsync(defaultTranslation);
 
             var translationService = new PokedexProject.Middlewares.TranslationService.TranslationService(
@@ -69,19 +69,19 @@ namespace PokedexProject.Test.Middlewares.TranslationService
                 _serviceProvider.GetService<IMemoryCache>(),
                 _serviceProvider.GetService<TranslationResponseValidator>(), _pokemonService.Object);
 
-            var result = await translationService.GetTranslatedPokemonByInfo(defaultPokemon.Name);
+            var result = await translationService.GetTranslatedPokemonByName(defaultPokemon.Name);
 
             Assert.True(result.Success);
             Assert.Equal(defaultTranslation.Contents.Translated, result.Data.Description);
         }
 
         [Fact]
-        public async void GetTranslatedPokemonByInfo_ShouldReturnShakeSpearTranslatedPokemonDescription_WhenAllDataIsProvided()
+        public async void GetTranslatedPokemonByName_ShouldReturnShakeSpearTranslatedPokemonDescription_WhenAllDataIsProvided()
         {
-            _pokemonService.Setup(x => x.GetPokemonByInfo(It.IsAny<string>())).ReturnsAsync(() =>
+            _pokemonService.Setup(x => x.GetPokemonByName(It.IsAny<string>())).ReturnsAsync(() =>
             {
                 defaultPokemon.IsLegendary = false;
-                return Result<PokemonDisplay>.SuccessResult(defaultPokemon);
+                return Result<PokemonDTO>.SuccessResult(defaultPokemon);
             });
             _translationClient.Setup(x => x.GetShakespeareTranslation(It.IsAny<string>())).ReturnsAsync(defaultTranslation);
 
@@ -90,19 +90,19 @@ namespace PokedexProject.Test.Middlewares.TranslationService
                 _serviceProvider.GetService<IMemoryCache>(),
                 _serviceProvider.GetService<TranslationResponseValidator>(), _pokemonService.Object);
 
-            var result = await translationService.GetTranslatedPokemonByInfo(defaultPokemon.Name);
+            var result = await translationService.GetTranslatedPokemonByName(defaultPokemon.Name);
 
             Assert.True(result.Success);
             Assert.Equal(defaultTranslation.Contents.Translated, result.Data.Description);
         }
 
         [Fact]
-        public async void GetTranslatedPokemonByInfo_ShouldReturnDefaultTranslatedPokemonDescription_WhenTranslationThrowsException()
+        public async void GetTranslatedPokemonByName_ShouldReturnDefaultTranslatedPokemonDescription_WhenTranslationThrowsException()
         {
-            _pokemonService.Setup(x => x.GetPokemonByInfo(It.IsAny<string>())).ReturnsAsync(() =>
+            _pokemonService.Setup(x => x.GetPokemonByName(It.IsAny<string>())).ReturnsAsync(() =>
             {
                 defaultPokemon.IsLegendary = false;
-                return Result<PokemonDisplay>.SuccessResult(defaultPokemon);
+                return Result<PokemonDTO>.SuccessResult(defaultPokemon);
             });
             _translationClient.Setup(x => x.GetShakespeareTranslation(It.IsAny<string>())).ReturnsAsync(() =>
             {
@@ -114,19 +114,19 @@ namespace PokedexProject.Test.Middlewares.TranslationService
                 _serviceProvider.GetService<IMemoryCache>(),
                 _serviceProvider.GetService<TranslationResponseValidator>(), _pokemonService.Object);
 
-            var result = await translationService.GetTranslatedPokemonByInfo(defaultPokemon.Name);
+            var result = await translationService.GetTranslatedPokemonByName(defaultPokemon.Name);
 
             Assert.True(result.Success);
             Assert.Equal(defaultPokemon.Description, result.Data.Description);
         }
 
         [Fact]
-        public async void GetTranslatedPokemonByInfo_ShouldReturnDefaultTranslatedPokemonDescription_WhenTranslationReturnInvalidResponse()
+        public async void GetTranslatedPokemonByName_ShouldReturnDefaultTranslatedPokemonDescription_WhenTranslationReturnInvalidResponse()
         {
-            _pokemonService.Setup(x => x.GetPokemonByInfo(It.IsAny<string>())).ReturnsAsync(() =>
+            _pokemonService.Setup(x => x.GetPokemonByName(It.IsAny<string>())).ReturnsAsync(() =>
             {
                 defaultPokemon.IsLegendary = true;
-                return Result<PokemonDisplay>.SuccessResult(defaultPokemon);
+                return Result<PokemonDTO>.SuccessResult(defaultPokemon);
             });
             _translationClient.Setup(x => x.GetYodaTranslation(It.IsAny<string>())).ReturnsAsync(() =>
             {
@@ -139,7 +139,7 @@ namespace PokedexProject.Test.Middlewares.TranslationService
                 _serviceProvider.GetService<IMemoryCache>(),
                 _serviceProvider.GetService<TranslationResponseValidator>(), _pokemonService.Object);
 
-            var result = await translationService.GetTranslatedPokemonByInfo(defaultPokemon.Name);
+            var result = await translationService.GetTranslatedPokemonByName(defaultPokemon.Name);
 
             Assert.True(result.Success);
             Assert.Equal(defaultPokemon.Description, result.Data.Description);

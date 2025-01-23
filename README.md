@@ -20,7 +20,7 @@ Docker version 24.0.2, build cb74dfc
 Position yorself at the root of the project and run the following command
 
 ```
- docker build  -f "./PokedexProject/Dockerfile" --t 'pokedex_api' .
+ docker build  -f "./PokedexProject/Dockerfile" -t 'pokedex_api' .
 ```
 
 Once completed, run the following command to run a container using the newly created image
@@ -60,9 +60,9 @@ Please be aware that the response time might be very long (minutes if the contai
 
 Although a simple service, there are some considerations that can be make whether this were to go on production
 
--   if this endpoint where to be scaled, there could be come performance advantages by using a shared remote cache using Redis or similar services and controlling the behaviour with some env parameter
--   if this service where to run in a distributed environment as a mircoservice, many different aspects such as rate-limiting, resilience, circuit-break policy etc. need to be considered. Some of these concerns may be alleviate by using a library like Polly
--   regarding language, we should consider all the localization complications since the pokeapi endpoint can support many different languages. This could controlled using, for example, the accept-language header coming with the request
+- if this endpoint where to be scaled, there could be come performance advantages by using a shared remote cache using Redis or similar services and controlling the behaviour with some env parameter
+- if this service where to run in a distributed environment as a mircoservice, many different aspects such as rate-limiting, resilience, circuit-break policy etc. need to be considered. Some of these concerns may be alleviate by using a library like Polly
+- regarding language, we should consider all the localization complications since the pokeapi endpoint can support many different languages. This could controlled using, for example, the accept-language header coming with the request
 
 ## Final Consideration
 

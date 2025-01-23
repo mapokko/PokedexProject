@@ -17,14 +17,14 @@ namespace PokedexProject.Test.Controllers
     {
         private Mock<IPokemonService> _pokemonService;
         private Mock<ITranslationService> _translationService;
-        private PokemonDisplay defaultPokemon;
+        private PokemonDTO defaultPokemon;
 
         public PokemonControllerTest()
         {
             _pokemonService = new Mock<IPokemonService>();
             _translationService = new Mock<ITranslationService>();
 
-            defaultPokemon = new PokemonDisplay()
+            defaultPokemon = new PokemonDTO()
             {
                 Description = "normal Description",
                 HabitatName = "swamp",
@@ -78,7 +78,7 @@ namespace PokedexProject.Test.Controllers
         [Fact]
         public async void GetPokemon_ShouldReturnSuccess_WhenServiceMethodSucceeds()
         {
-            _pokemonService.Setup(x => x.GetPokemonByInfo(It.IsAny<string>())).ReturnsAsync(Result<PokemonDisplay>.SuccessResult(defaultPokemon));
+            _pokemonService.Setup(x => x.GetPokemonByName(It.IsAny<string>())).ReturnsAsync(Result<PokemonDTO>.SuccessResult(defaultPokemon));
             var pokemonController = new PokemonController(_pokemonService.Object, _translationService.Object);
 
             var result = await pokemonController.GetPokemon("test") as OkObjectResult;
@@ -86,14 +86,14 @@ namespace PokedexProject.Test.Controllers
             Assert.Equal(HttpStatusCode.OK, (HttpStatusCode)result.StatusCode);
             Assert.NotNull(result.Value);
 
-            var value = result.Value as PokemonDisplay;
+            var value = result.Value as PokemonDTO;
             Assert.Equal(defaultPokemon.Description, value.Description);
         }
 
         [Fact]
         public async void GetTranslatedPokemon_ShouldReturnSuccess_WhenServiceMethodSucceeds()
         {
-            _translationService.Setup(x => x.GetTranslatedPokemonByInfo(It.IsAny<string>())).ReturnsAsync(Result<PokemonDisplay>.SuccessResult(defaultPokemon));
+            _translationService.Setup(x => x.GetTranslatedPokemonByName(It.IsAny<string>())).ReturnsAsync(Result<PokemonDTO>.SuccessResult(defaultPokemon));
             var pokemonController = new PokemonController(_pokemonService.Object, _translationService.Object);
 
             var result = await pokemonController.GetTranslatedPokemon("test") as OkObjectResult;
@@ -101,14 +101,14 @@ namespace PokedexProject.Test.Controllers
             Assert.Equal(HttpStatusCode.OK, (HttpStatusCode)result.StatusCode);
             Assert.NotNull(result.Value);
 
-            var value = result.Value as PokemonDisplay;
+            var value = result.Value as PokemonDTO;
             Assert.Equal(defaultPokemon.Description, value.Description);
         }
 
         [Fact]
         public async void GetPokemon_ShouldReturnError_WhenServiceMethodGivesError()
         {
-            _pokemonService.Setup(x => x.GetPokemonByInfo(It.IsAny<string>())).ReturnsAsync(Result<PokemonDisplay>.ErrorResult(HttpStatusCode.InternalServerError, "Internal Server Error :)"));
+            _pokemonService.Setup(x => x.GetPokemonByName(It.IsAny<string>())).ReturnsAsync(Result<PokemonDTO>.ErrorResult(HttpStatusCode.InternalServerError, "Internal Server Error :)"));
             var pokemonController = new PokemonController(_pokemonService.Object, _translationService.Object);
 
             var result = await pokemonController.GetPokemon("test") as ObjectResult;
@@ -127,7 +127,7 @@ namespace PokedexProject.Test.Controllers
         [Fact]
         public async void GetTranslatedPokemon_ShouldReturnError_WhenServiceMethodGivesError()
         {
-            _translationService.Setup(x => x.GetTranslatedPokemonByInfo(It.IsAny<string>())).ReturnsAsync(Result<PokemonDisplay>.ErrorResult(HttpStatusCode.InternalServerError, "Internal Server Error :)"));
+            _translationService.Setup(x => x.GetTranslatedPokemonByName(It.IsAny<string>())).ReturnsAsync(Result<PokemonDTO>.ErrorResult(HttpStatusCode.InternalServerError, "Internal Server Error :)"));
             var pokemonController = new PokemonController(_pokemonService.Object, _translationService.Object);
 
             var result = await pokemonController.GetTranslatedPokemon("test") as ObjectResult;

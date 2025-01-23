@@ -12,31 +12,31 @@ namespace PokedexProject.Middlewares.TranslationService
 {
     public sealed class TranslationService(ITranslationClient translationClient, ISlugHelper slug, IMemoryCache memoryCache, TranslationResponseValidator validator, IPokemonService pokemonService) : ITranslationService
     {
-        public async Task<Result<PokemonDisplay>> GetTranslatedPokemonByInfo(string pokemonName)
+        public async Task<Result<PokemonDTO>> GetTranslatedPokemonByName(string pokemonName)
         {
             if (string.IsNullOrEmpty(pokemonName.Trim()))
-                Result<PokemonDisplay>.ErrorResult(HttpStatusCode.BadRequest, "Pokemon name cannot be empty");
+                Result<PokemonDTO>.ErrorResult(HttpStatusCode.BadRequest, "Pokemon name cannot be empty");
 
             string slugifiedPokemonName = slug.GenerateSlug(pokemonName);
 
             if (memoryCache.TryGetValue(slugifiedPokemonName, out PokemonCache cachedPokemon))
             {
                 if (cachedPokemon.UseYoda &&  !string.IsNullOrEmpty(cachedPokemon.YodaTranslation))
-                    return Result<PokemonDisplay>.SuccessResult(new PokemonDisplay(cachedPokemon, TranslationType.Yoda));
+                    return Result<PokemonDTO>.SuccessResult(new PokemonDTO(cachedPokemon, TranslationType.Yoda));
 
                 if (!string.IsNullOrEmpty(cachedPokemon.ShakespeareTranslation))
-                    return Result<PokemonDisplay>.SuccessResult(new PokemonDisplay(cachedPokemon, TranslationType.Shakespeare));
+                    return Result<PokemonDTO>.SuccessResult(new PokemonDTO(cachedPokemon, TranslationType.Shakespeare));
             }
 
-            PokemonDisplay pokemonDisplay = null;
+            PokemonDTO pokemonDisplay = null;
 
             if (cachedPokemon != null)
             {
-                pokemonDisplay = new PokemonDisplay(cachedPokemon, TranslationType.Regular);
+                pokemonDisplay = new PokemonDTO(cachedPokemon, TranslationType.Regular);
             }
             else
             {
-                var searchPokemonResult = await pokemonService.GetPokemonByInfo(pokemonName);
+                var searchPokemonResult = await pokemonService.GetPokemonByName(pokemonName);
 
                 if (!searchPokemonResult.Success)
                     return searchPokemonResult;
@@ -54,14 +54,14 @@ namespace PokedexProject.Middlewares.TranslationService
             }
             catch (Exception ex)
             {
-                return Result<PokemonDisplay>.SuccessResult(pokemonDisplay);
+                return Result<PokemonDTO>.SuccessResult(pokemonDisplay);
             }
 
             ValidationResult validationResult = validator.Validate(translationResponse);
 
             if (!validationResult.IsValid)
             {
-                return Result<PokemonDisplay>.SuccessResult(pokemonDisplay);
+                return Result<PokemonDTO>.SuccessResult(pokemonDisplay);
             }
 
             if (cachedPokemon == null)
@@ -80,7 +80,7 @@ namespace PokedexProject.Middlewares.TranslationService
             pokemonDisplay.Description = translationResponse.Contents.Translated;
             memoryCache.Set(slugifiedPokemonName, cachedPokemon);
 
-            return Result<PokemonDisplay>.SuccessResult(pokemonDisplay);
+            return Result<PokemonDTO>.SuccessResult(pokemonDisplay);
         }
 
     }

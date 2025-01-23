@@ -13,15 +13,15 @@ namespace PokedexProject.Middlewares.PokemonService
     public sealed class PokemonService(IPokemonClient pokemonClient, ISlugHelper slug, IMemoryCache memoryCache, PokemonDescriptionValidator validator) : IPokemonService
     {
 
-        public async Task<Result<PokemonDisplay>> GetPokemonByInfo(string pokemonName)
+        public async Task<Result<PokemonDTO>> GetPokemonByName(string pokemonName)
         {
             if(string.IsNullOrEmpty(pokemonName.Trim()))
-                Result<PokemonDisplay>.ErrorResult(HttpStatusCode.BadRequest, "Pokemon name cannot be empty");
+                Result<PokemonDTO>.ErrorResult(HttpStatusCode.BadRequest, "Pokemon name cannot be empty");
 
             string slugifiedPokemonName = slug.GenerateSlug(pokemonName);
             if(memoryCache.TryGetValue(slugifiedPokemonName, out PokemonCache cachedPokemon))
             {
-                return Result<PokemonDisplay>.SuccessResult(new PokemonDisplay(cachedPokemon, TranslationType.Regular));
+                return Result<PokemonDTO>.SuccessResult(new PokemonDTO(cachedPokemon, TranslationType.Regular));
             }
 
             PokemonDescription pokemonDescription = null;
@@ -31,11 +31,11 @@ namespace PokedexProject.Middlewares.PokemonService
             }
             catch (HttpRequestException ex)
             {
-                return Result<PokemonDisplay>.ErrorResult(ex.StatusCode ?? HttpStatusCode.InternalServerError, ex.Message);
+                return Result<PokemonDTO>.ErrorResult(ex.StatusCode ?? HttpStatusCode.InternalServerError, ex.Message);
             }
             catch (Exception ex)
             {
-                return Result<PokemonDisplay>.ErrorResult(HttpStatusCode.InternalServerError, ex.Message);
+                return Result<PokemonDTO>.ErrorResult(HttpStatusCode.InternalServerError, ex.Message);
 
             }
 
@@ -43,10 +43,10 @@ namespace PokedexProject.Middlewares.PokemonService
 
             if (!validationResult.IsValid)
             {
-                return Result<PokemonDisplay>.ErrorResult(HttpStatusCode.NotFound, validationResult.Errors.Select(el => el.ErrorMessage).ToList());
+                return Result<PokemonDTO>.ErrorResult(HttpStatusCode.NotFound, validationResult.Errors.Select(el => el.ErrorMessage).ToList());
             }
 
-            PokemonDisplay result = new PokemonDisplay
+            PokemonDTO result = new PokemonDTO
             {
                 Name = pokemonDescription.EnglishName,
                 Description = Regex.Replace(pokemonDescription.EnglishFlavorText, @"\s+", " "),
@@ -56,7 +56,7 @@ namespace PokedexProject.Middlewares.PokemonService
 
             memoryCache.Set(slugifiedPokemonName, new PokemonCache(result));
 
-            return Result<PokemonDisplay>.SuccessResult(result);
+            return Result<PokemonDTO>.SuccessResult(result);
         }
     }
 }

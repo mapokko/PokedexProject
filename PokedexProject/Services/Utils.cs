@@ -33,10 +33,10 @@ namespace PokedexProject.Middlewares
         public string ErrorMessage { get; set; }
     }
 
-    public class PokemonDisplay : PokemonInfo
+    public class PokemonDTO : PokemonInfo
     {
-        public PokemonDisplay() { }
-        public PokemonDisplay(PokemonCache pokemon, TranslationType type)
+        public PokemonDTO() { }
+        public PokemonDTO(PokemonCache pokemon, TranslationType type)
         {
             Name = pokemon.Name;
             IsLegendary = pokemon.IsLegendary;
@@ -60,7 +60,7 @@ namespace PokedexProject.Middlewares
 
     public class PokemonCache : PokemonInfo
     {
-        public PokemonCache(PokemonDisplay pokemon)
+        public PokemonCache(PokemonDTO pokemon)
         {
             Name = pokemon.Name;
             IsLegendary = pokemon.IsLegendary;
